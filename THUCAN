@@ -1,0 +1,24 @@
+
+Point ThucAn()//TẠO MỒI NGẪU NHIÊN 
+{
+    Point p;
+    p.x = 1 + rand() % (dai - 2);
+    p.y = 1 + rand() % (rong - 2);
+    return p;
+}
+
+// Di chuyển con trỏ console đến vị trí có tọa độ (x, y)
+void gotoxy(int column, int line)
+{
+    COORD coord;
+    coord.X = column;
+    coord.Y = line;
+    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
+}
+bool operator==(Point a, Point b)
+{
+    if (a.x == b.x && a.y == b.y)
+        return true;
+    else
+        return false;
+}
