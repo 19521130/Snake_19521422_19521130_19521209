@@ -1,0 +1,42 @@
+#include <iostream>
+#include <windows.h>
+#include <cstdlib>
+#include <conio.h>
+#include <math.h>
+#include <ctime>    
+#define dai 70 //TƯỜNG CÓ CHIỀU DÀI 70
+#define rong 20 //TƯỜNG CÓ CHIỀU RỘNG 20
+using namespace std;
+
+void gotoxy(int column, int line);
+
+struct Point //TỌA ĐỘ
+{
+    int x, y;
+};
+bool operator==(Point a, Point b);
+
+class MOITRUONG //TẠO MÔI TRƯỜNG (BỨC TƯỜNG)
+{
+public:
+    Point A[dai][rong];
+    MOITRUONG()
+    {
+        for (int i = 0; i < dai; i++)
+            for (int j = 0; j < rong; j++)
+            {
+                A[i][j].x = i;
+                A[i][j].y = j;
+            }
+    }
+    void Ve()
+    {
+        for (int i = 0; i < dai; i++)
+            for (int j = 0; j < rong; j++)
+            {
+                gotoxy(A[i][j].x, A[i][j].y);
+                if (i == 0 || i == dai - 1 || j == 0 || j == rong - 1)
+                    cout << "*";//TƯỜNG ĐƯỢC KÍ HIỆU BẰNG DẤU "*"
+            }
+    }
+};
