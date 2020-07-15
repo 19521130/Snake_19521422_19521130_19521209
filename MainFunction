@@ -1,0 +1,58 @@
+int main()
+{
+    srand(time(NULL));
+    MOITRUONG mt;
+    CONRAN r;
+    int Huong = 0;
+    char t;
+    int h = Huong;
+    Point p = ThucAn();
+    int dem = 0;
+    float speed = 500;//tốc độ ban đầu
+    while (1)
+    {
+        if (_kbhit())//HƯỚNG DI CHUYỂN THỰC HIỆN BẰNG CÁC PHÍM CHỮ "A, W, S, D"
+        {
+            t = _getch();
+            if (t == 'a') Huong = 2;
+            if (t == 'w') Huong = 3;
+            if (t == 'd') Huong = 0;
+            if (t == 's') Huong = 1;
+        }
+        if (abs(h - Huong) == 2)
+            Huong = h;
+        h = Huong;
+        system("cls");
+        mt.Ve();
+        r.Ve(p);
+        r.DiChuyen(Huong);
+        if (r.Chet(mt))//KHI RẮN CHẾT -> KẾT THÚC TRÒ CHƠI 
+        {
+            system("cls");
+            cout << "GAME OVER" << endl;
+            cout << "Score: " << r.DoDai << endl;//xuất độ dài của rắn 
+            system("pause");
+            return 0;
+        }
+        if (r.ChienThang(mt))//KHI CHIẾN THẮNG
+        {
+            system("cls");
+            cout << "WINNER" << endl;
+            cout << "YOU'RE THE BEST PLAYER" << endl;
+            system("pause");
+            return 0;
+        }
+        if (r.An(p, Huong))//MỖI LẦN ĂN ĐƯỢC MỒI ĐỘ DÀI RẮN TĂNG LÊN 1
+        {
+            dem++;
+            p = ThucAn();
+        }
+        if (dem == 5 && speed >= 10)//KHI ĂN ĐƯỢC 5 MỒI THÌ TỐC ĐỘ TĂNG LÊN 1/2 TỐC ĐỘ BAN ĐẦU
+        {
+            dem = 0;
+            speed = speed / 2;
+        }
+        Sleep(speed);
+    }
+    return 0;
+}
