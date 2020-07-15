@@ -1,0 +1,210 @@
+#include <iostream>
+#include <windows.h>
+#include <cstdlib>
+#include <conio.h>
+#include <math.h>
+#include <ctime>    
+#define dai 70 //TƯỜNG CÓ CHIỀU DÀI 70
+#define rong 20 //TƯỜNG CÓ CHIỀU RỘNG 20
+using namespace std;
+
+void gotoxy(int column, int line);
+
+struct Point //TỌA ĐỘ
+{
+    int x, y;
+};
+bool operator==(Point a, Point b);
+
+class MOITRUONG //TẠO MÔI TRƯỜNG (BỨC TƯỜNG)
+{
+public:
+    Point A[dai][rong];
+    MOITRUONG()
+    {
+        for (int i = 0; i < dai; i++)
+            for (int j = 0; j < rong; j++)
+            {
+                A[i][j].x = i;
+                A[i][j].y = j;
+            }
+    }
+    void Ve()
+    {
+        for (int i = 0; i < dai; i++)
+            for (int j = 0; j < rong; j++)
+            {
+                gotoxy(A[i][j].x, A[i][j].y);
+                if (i == 0 || i == dai - 1 || j == 0 || j == rong - 1)
+                    cout << "*";//TƯỜNG ĐƯỢC KÍ HIỆU BẰNG DẤU "*"
+            }
+    }
+}; class CONRAN {
+public:
+    struct Point A[100];
+    int DoDai;
+    CONRAN()//TẠO CON RẮN CÓ ĐỘ DÀI BẰNG 3
+    {
+        DoDai = 3;
+        A[0].x = 10; A[0].y = 10;
+        A[1].x = 11; A[1].y = 10;
+        A[2].x = 12; A[2].y = 10;
+    }
+    void Ve(Point p)
+    {
+        gotoxy(p.x, p.y);
+        cout << "+";//MỒI ĐƯỢC KÍ HIỆU BẰNG DẤU "+"
+        for (int i = 0; i < DoDai; i++)
+        {
+            gotoxy(A[i].x, A[i].y);
+            cout << "x";//CON RẮN ĐƯỢC KÍ HIỆU BẰNG KÍ TỰ "x"
+        }
+    }
+    int DiChuyen(int Huong)//HƯỚNG DI CHUYỂN CỦA RẮN
+    {
+        for (int i = DoDai - 1; i > 0; i--)
+            A[i] = A[i - 1];
+        if (Huong == 0) A[0].x = A[0].x + 1;//PHẢI
+        if (Huong == 1) A[0].y = A[0].y + 1;//LÊN
+        if (Huong == 2) A[0].x = A[0].x - 1;//TRÁI
+        if (Huong == 3) A[0].y = A[0].y - 1;//XUỐNG
+        return Huong;
+    }
+    bool An(Point p, int Huong)//ĂN MỒI
+    {
+        if (A[1] == p)
+        {
+            for (int i = DoDai; i > 0; i--)
+                A[i] = A[i - 1];
+            switch (Huong)
+            {
+            case 0:
+            {
+                A[0].x = A[0].x + 1;
+                break;
+            }
+            case 1:
+            {
+                A[0].y = A[0].y + 1;
+                break;
+            }
+            case 2:
+            {
+                A[0].x = A[0].x - 1;
+                break;
+            }
+            case 3:
+            {
+                A[0].y = A[0].y - 1;
+                break;
+            }
+            }
+            DoDai++;//MỖI LẦN ĂN ĐƯỢC MỒI ĐỘ DÀI RẮN TĂNG LÊN 1
+            return true;
+        }
+        else
+            return false;
+    }
+    bool Chet(MOITRUONG mt)//RẮN CHẾT KHI ĐÂM TƯỜNG HOẶC TỰ ĂN MÌNH
+    {
+        if (A[0].x == 0 || A[0].y == 0 || A[0].x == dai - 1 || A[0].y == rong - 1)
+            return true;
+        else
+        {
+            for (int i = 4; i < DoDai - 1; i++)
+            {
+                if (A[0] == A[i])
+                    return true;
+            }
+            return false;
+        }
+    }
+    bool ChienThang(MOITRUONG mt)//GAME CHIẾN THẮNG KHI ĐỘ DÀI RẮN CHIẾM HẾT DIỆN TÍCH MÔI TRƯỜNG
+    {
+        if (DoDai == dai * rong - (dai + rong) * 2 - 1)
+            return true;
+        return false;
+    }
+};
+Point ThucAn()//TẠO MỒI NGẪU NHIÊN 
+{
+    Point p;
+    p.x = 1 + rand() % (dai - 2);
+    p.y = 1 + rand() % (rong - 2);
+    return p;
+}
+
+int main()
+{
+    srand(time(NULL));
+    MOITRUONG mt;
+    CONRAN r;
+    int Huong = 0;
+    char t;
+    int h = Huong;
+    Point p = ThucAn();
+    int dem = 0;
+    float speed = 500;//tốc độ ban đầu
+    while (1)
+    {
+        if (_kbhit())//HƯỚNG DI CHUYỂN THỰC HIỆN BẰNG CÁC PHÍM CHỮ "A, W, S, D"
+        {
+            t = _getch();
+            if (t == 'a') Huong = 2;
+            if (t == 'w') Huong = 3;
+            if (t == 'd') Huong = 0;
+            if (t == 's') Huong = 1;
+        }
+        if (abs(h - Huong) == 2)
+            Huong = h;
+        h = Huong;
+        system("cls");
+        mt.Ve();
+        r.Ve(p);
+        r.DiChuyen(Huong);
+        if (r.Chet(mt))//KHI RẮN CHẾT -> KẾT THÚC TRÒ CHƠI 
+        {
+            system("cls");
+            cout << "GAME OVER" << endl;
+            cout << "Score: " << r.DoDai << endl;//xuất độ dài của rắn 
+            system("pause");
+            return 0;
+        }
+        if (r.ChienThang(mt))//KHI CHIẾN THẮNG
+        {
+            system("cls");
+            cout << "WINNER" << endl;
+            cout << "YOU'RE THE BEST PLAYER" << endl;
+            system("pause");
+            return 0;
+        }
+        if (r.An(p, Huong))//MỖI LẦN ĂN ĐƯỢC MỒI ĐỘ DÀI RẮN TĂNG LÊN 1
+        {
+            dem++;
+            p = ThucAn();
+        }
+        if (dem == 5 && speed >= 10)//KHI ĂN ĐƯỢC 5 MỒI THÌ TỐC ĐỘ TĂNG LÊN 1/2 TỐC ĐỘ BAN ĐẦU
+        {
+            dem = 0;
+            speed = speed / 2;
+        }
+        Sleep(speed);
+    }
+    return 0;
+}
+// Di chuyển con trỏ console đến vị trí có tọa độ (x, y)
+void gotoxy(int column, int line)
+{
+    COORD coord;
+    coord.X = column;
+    coord.Y = line;
+    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
+}
+bool operator==(Point a, Point b)
+{
+    if (a.x == b.x && a.y == b.y)
+        return true;
+    else
+        return false;
+}
+
